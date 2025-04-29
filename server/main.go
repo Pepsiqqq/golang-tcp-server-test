@@ -57,7 +57,7 @@ func handleClient(conn net.Conn) {
 		fmt.Println("Error:", err)
 		return
 	}
-	err = ValidateModel(base)
+	err = models.ValidateModel(base)
 	if err != nil {
 		fmt.Println("Validation failed", err)
 		return

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<RS V="1">
+   <ProtVer>2</ProtVer>
+   <Length>2</Length>
+   <SeqNum>2</SeqNum>
+   <MID>1</MID>
+   <TOut>2</TOut>
+   <Session>2</Session>
+   <Flags>2</Flags>
+   <ZPad>0</ZPad>
+   <CRC>1</CRC>
+   <ID_DEV>2</ID_DEV>
+   <KSize>64</KSize>
+   <G>200</G>
+   <P>200</P>
+   <A>200</A>
+   <MSize>64</MSize>
+   <MAC>200</MAC>
+   <MACKey>200</MACKey>
+</RS>
