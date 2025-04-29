@@ -59,14 +59,19 @@ func handleClient(conn net.Conn) {
 		fmt.Println("Validation failed", err)
 		return
 	}
-	var model struct{}
 	switch base.MID{
 	case 0x0001:
+		model := models.RRO_СOM_INI{}
 		err = decoder.Decode(&model)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}	
+		err = model.Validate()
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
 		test := models.CreateTestPacket()
 		_, err = conn.Write(test)
 		if err != nil {
