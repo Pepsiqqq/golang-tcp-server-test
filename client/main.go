@@ -12,7 +12,6 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-
 func main() {
 	startClient()
 }
@@ -29,7 +28,7 @@ func startClient() {
 }
 
 func sendData(conn net.Conn) {
-	modelRRO := models.RRO_СOM_INI{}
+	modelRRO := models.RRO_DTA_SND{}
 	data := modelRRO.CreateTestPacket()
 	file, _ := os.Create("test.xml")
 	file.Write(data)
@@ -51,7 +50,7 @@ func listenResponce(conn net.Conn) {
 		fmt.Println("Error1:", err)
 		return
 	}
-	srv := models.SRV_СOM_INI{}
+	srv := models.SRV_DTA_SND{}
 	fmt.Println(string(buffer))
 	fmt.Println("Unmarshaling")
 	decoder := xml.NewDecoder(bytes.NewReader(buffer))
@@ -60,10 +59,9 @@ func listenResponce(conn net.Conn) {
 	if err != nil {
 		fmt.Println("Error2:", err)
 		return
-	}
+	}	
 	fmt.Println("Done")
-	if srv.MID == 0x0002 {
+	if srv.MID == 0x0006 {
 		fmt.Printf("All good")
 	}
 }
-

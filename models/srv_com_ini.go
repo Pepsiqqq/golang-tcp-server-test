@@ -44,3 +44,7 @@ func (s SRV_СOM_INI) CreateTestPacket() []byte {
 	}
 	return bytearray
 }
+
+func (r SRV_СOM_INI) Validate() error{
+	return nil
+}

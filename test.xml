@@ -3,18 +3,22 @@
    <ProtVer>2</ProtVer>
    <Length>2</Length>
    <SeqNum>2</SeqNum>
-   <MID>1</MID>
+   <MID>5</MID>
    <TOut>2</TOut>
    <Session>2</Session>
    <Flags>2</Flags>
    <ZPad>0</ZPad>
    <CRC>1</CRC>
-   <ID_DEV>2</ID_DEV>
-   <KSize>64</KSize>
-   <G>200</G>
-   <P>200</P>
-   <A>200</A>
-   <MSize>64</MSize>
-   <MAC>200</MAC>
-   <MACKey>200</MACKey>
+   <PackType>17</PackType>
+   <PackNum>1</PackNum>
+   <Error>1</Error>
+   <CTime>�����</CTime>
+   <STime>1</STime>
+   <FTime>1</FTime>
+   <DataLen>1</DataLen>
+   <Service>1</Service>
+   <ShiftNum>1</ShiftNum>
+   <DocNum>1</DocNum>
+   <Upload>1</Upload>
+   <Data>200</Data>
 </RS>

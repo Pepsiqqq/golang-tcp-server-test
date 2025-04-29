@@ -85,7 +85,7 @@ func handleClient(conn net.Conn) {
 			fmt.Println("Writing to client error:", err)
 			return
 		}
-	case 0x00011:
+	case 0x0011:
 		fmt.Println(string(modelbuffer))
 		modelRRO := models.RRO_STATUS{}
 		decoder := xml.NewDecoder(bytes.NewReader(modelbuffer))
@@ -101,6 +101,29 @@ func handleClient(conn net.Conn) {
 			return
 		}
 		modelSRV := models.SRV_STATUS{}
+		test := modelSRV.CreateTestPacket()
+		_, err = conn.Write(test)
+		if err != nil {
+			fmt.Println("Writing to client error:", err)
+			return
+		}
+
+	case 0x0005:
+		fmt.Println(string(modelbuffer))
+		modelRRO := models.RRO_DTA_SND{}
+		decoder := xml.NewDecoder(bytes.NewReader(modelbuffer))
+		decoder.CharsetReader = charset.NewReaderLabel
+		err = decoder.Decode(&modelRRO)
+		if err != nil {
+			fmt.Println("Decode error:", err)
+			return
+		}
+		err = modelRRO.Validate()
+		if err != nil {
+			fmt.Println("Validating error:", err)
+			return
+		}
+		modelSRV := models.SRV_DTA_SND{}
 		test := modelSRV.CreateTestPacket()
 		_, err = conn.Write(test)
 		if err != nil {
