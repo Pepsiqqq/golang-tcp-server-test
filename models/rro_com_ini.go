@@ -1,15 +1,12 @@
 package models
 
 import (
-	"encoding/xml"
 	"fmt"
 
 	"github.com/go-faster/errors"
 )
 
 type RRO_СOM_INI struct {
-	XMLName xml.Name `xml:"RS"`
-	V       int      `xml:"V,attr"`
 	Base
 	ID_DEV uint32 `xml:"ID_DEV"`
 	KSize  uint16 `xml:"KSize"`
@@ -19,8 +16,6 @@ type RRO_СOM_INI struct {
 	MSize  uint16 `xml:"MSize"`
 	MAC    []byte `xml:"MAC"`
 	MACKey []byte `xml:"MACKey"`
-	ZPad   uint32 `xml:"ZPad"`
-	CRC    uint32 `xml:"CRC"`
 }
 
 func (r RRO_СOM_INI) Validate() error {
@@ -32,9 +27,7 @@ func (r RRO_СOM_INI) Validate() error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to validate mac")
 	}
-	if r.ZPad != 0 {
-		return errors.Wrap(err, "Zpad not null")
-	}
+
 	return nil
 }
 

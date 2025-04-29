@@ -1,6 +1,6 @@
 package models
 
-type RRO_DTA_SND struct {
+type SRV_DTA_REQ struct {
 	Base
 	PackType uint8    `xml:"PackType"`
 	PackNum  uint8    `xml:"PackNum"`
@@ -15,5 +15,3 @@ type RRO_DTA_SND struct {
 	Upload   uint32   `xml:"Upload"`
 	Data     []byte   `xml:"Data"`
 }
-
-

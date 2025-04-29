@@ -7,8 +7,9 @@ import (
 	"io"
 	"net"
 
-	"golang.org/x/net/html/charset"
 	"main/models"
+
+	"golang.org/x/net/html/charset"
 )
 
 func main() {
@@ -39,15 +40,17 @@ func startServer() {
 
 func handleClient(conn net.Conn) {
 	defer conn.Close()
-	buffer := make([]byte, 4096)
-	_, err := conn.Read(buffer)
+	basebuffer := make([]byte, 4096)
+	modelbuffer := make([]byte, 4096)
+	_, err := conn.Read(basebuffer)
 	if err != nil && err != io.EOF {
 		fmt.Println("Error:", err)
 		return
 	}
+	modelbuffer = basebuffer
 	base := models.Base{}
-	fmt.Println(string(buffer))
-	decoder := xml.NewDecoder(bytes.NewReader(buffer))
+	fmt.Println(string(basebuffer))
+	decoder := xml.NewDecoder(bytes.NewReader(basebuffer))
 	decoder.CharsetReader = charset.NewReaderLabel
 	err = decoder.Decode(&base)
 	if err != nil {
@@ -59,23 +62,49 @@ func handleClient(conn net.Conn) {
 		fmt.Println("Validation failed", err)
 		return
 	}
-	switch base.MID{
+	switch base.MID {
 	case 0x0001:
-		model := models.RRO_СOM_INI{}
-		err = decoder.Decode(&model)
+		fmt.Println(string(modelbuffer))
+		modelRRO := models.RRO_СOM_INI{}
+		decoder := xml.NewDecoder(bytes.NewReader(modelbuffer))
+		decoder.CharsetReader = charset.NewReaderLabel
+		err = decoder.Decode(&modelRRO)
 		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}	
-		err = model.Validate()
-		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Println("Decode error:", err)
 			return
 		}
-		test := models.CreateTestPacket()
+		err = modelRRO.Validate()
+		if err != nil {
+			fmt.Println("Validating error:", err)
+			return
+		}
+		modelSRV := models.SRV_СOM_INI{}
+		test := modelSRV.CreateTestPacket()
 		_, err = conn.Write(test)
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Println("Writing to client error:", err)
+			return
+		}
+	case 0x00011:
+		fmt.Println(string(modelbuffer))
+		modelRRO := models.RRO_STATUS{}
+		decoder := xml.NewDecoder(bytes.NewReader(modelbuffer))
+		decoder.CharsetReader = charset.NewReaderLabel
+		err = decoder.Decode(&modelRRO)
+		if err != nil {
+			fmt.Println("Decode error:", err)
+			return
+		}
+		err = modelRRO.Validate()
+		if err != nil {
+			fmt.Println("Validating error:", err)
+			return
+		}
+		modelSRV := models.SRV_STATUS{}
+		test := modelSRV.CreateTestPacket()
+		_, err = conn.Write(test)
+		if err != nil {
+			fmt.Println("Writing to client error:", err)
 			return
 		}
 	}
