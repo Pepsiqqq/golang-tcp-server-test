@@ -7,6 +7,7 @@ import (
 	"io"
 	"main/models"
 	"main/models/com_ini"
+	"main/models/status"
 	"net"
 	"strconv"
 
@@ -43,14 +44,14 @@ func startClient() {
 	}
 	modelsMap := map[int]mo{
 		1: {&com_ini.RRO{}, &com_ini.SRV{}},
-		2: {&com_ini.RRO{}, &com_ini.SRV{}},
-		3: {&com_ini.RRO{}, &com_ini.SRV{}},
-		4: {&com_ini.RRO{}, &com_ini.SRV{}},
-		5: {&com_ini.RRO{}, &com_ini.SRV{}},
-		6: {&com_ini.RRO{}, &com_ini.SRV{}},
-		7: {&com_ini.RRO{}, &com_ini.SRV{}},
-		8: {&com_ini.RRO{}, &com_ini.SRV{}},
-		9: {&com_ini.RRO{}, &com_ini.SRV{}},
+		// 2: {&com_ini.RRO{}, &com_ini.SRV{}},
+		// 3: {&com_ini.RRO{}, &com_ini.SRV{}},
+		// 4: {&com_ini.RRO{}, &com_ini.SRV{}},
+		// 5: {&com_ini.RRO{}, &com_ini.SRV{}},
+		// 6: {&com_ini.RRO{}, &com_ini.SRV{}},
+		// 7: {&com_ini.RRO{}, &com_ini.SRV{}},
+		8: {&status.RRO{}, &status.SRV{}},
+		//9: {&com_ini.RRO{}, &com_ini.SRV{}},
 	}
 
 	// Creating model struct based on user input

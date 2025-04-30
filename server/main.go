@@ -9,6 +9,7 @@ import (
 
 	"main/models"
 	"main/models/com_ini"
+	"main/models/status"
 
 	"golang.org/x/net/html/charset"
 )
@@ -65,14 +66,15 @@ func handleClient(conn net.Conn) {
 		return
 	}
 	modelRROMap := map[int]models.Model{
-		0x0001: com_ini.RRO{},
-		// 0x0005: {},
-		// 0x0007: {},
-		// 0x0009: {},
-		// 0x000b: {},
-		// 0x000d: {},
-		// 0x0010: {},
-		// 0x0012: {},
+		models.MID_RRO_COM_INI: com_ini.RRO{},
+		// models.MID_RRO_DTA_SND:  {},
+		// models.MID_RRO_DTA_REQ:  {},
+		// models.MID_RRO_CTRL_REQ: {},
+		// models.MID_RRO_ECR_REQ:  {},
+		// models.MID_RRO_PRG_MEM:  {},
+		// models.MID_RRO_RD_MEM:   {},
+		models.MID_RRO_STATUS: status.RRO{},
+		//models.MID_RRO_PARAMS:   {},
 	}
 	modelRRO := modelRROMap[int(base.MID)] // don't need to check ok because already validated base model
 
@@ -91,14 +93,15 @@ func handleClient(conn net.Conn) {
 	// prepare and send test reply
 	fmt.Println("Send reply")
 	modelSRVMap := map[int]models.Model{
-		0x0002: com_ini.SRV{},
-		// 0x0006: {},
-		// 0x0008: {},
-		// 0x000a: {},
-		// 0x000c: {},
-		// 0x000f: {},
-		// 0x0011: {},
-		// 0x0013: {},
+		models.MID_SRV_COM_INI: com_ini.SRV{},
+		// MID_SRV_DTA_SND:  {},
+		// MID_SRV_DTA_REQ:  {},
+		// MID_SRV_CTRL_REQ: {},
+		// MID_SRV_ECR_REQ:  {},
+		// MID_SRV_PRG_MEM:  {},
+		// MID_SRV_RD_MEM:   {},
+		models.MID_SRV_STATUS: status.SRV{},
+		// MID_SRV_PARAMS:   {},
 	}
 	modelSRV := modelSRVMap[int(base.MID+0x0001)] // don't need to check ok because already validated base model
 	test, err := modelSRV.CreateTestPacket()

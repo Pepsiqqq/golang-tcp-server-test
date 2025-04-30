@@ -47,22 +47,24 @@ func (b Base) New(mid uint16) (Base, error) {
 func (b Base) Validate() error {
 	fmt.Println("Validating Base")
 	mid := map[int]struct{}{
-		0x0001: {},
-		0x0002: {},
-		0x0005: {},
-		0x0006: {},
-		0x0007: {},
-		0x0008: {},
-		0x0009: {},
-		0x000a: {},
-		0x000b: {},
-		0x000c: {},
-		0x000d: {},
-		0x000f: {},
-		0x0010: {},
-		0x0011: {},
-		0x0012: {},
-		0x0013: {},
+		MID_RRO_COM_INI:  {},
+		MID_SRV_COM_INI:  {},
+		MID_RRO_DTA_SND:  {},
+		MID_SRV_DTA_SND:  {},
+		MID_RRO_DTA_REQ:  {},
+		MID_SRV_DTA_REQ:  {},
+		MID_RRO_CTRL_REQ: {},
+		MID_SRV_CTRL_REQ: {},
+		MID_RRO_ECR_REQ:  {},
+		MID_SRV_ECR_REQ:  {},
+		MID_RRO_PRG_MEM:  {},
+		MID_SRV_PRG_MEM:  {},
+		MID_RRO_RD_MEM:   {},
+		MID_SRV_RD_MEM:   {},
+		MID_RRO_STATUS:   {},
+		MID_SRV_STATUS:   {},
+		MID_RRO_PARAMS:   {},
+		MID_SRV_PARAMS:   {},
 	}
 	_, ok := mid[int(b.MID)]
 	if !ok {
@@ -90,6 +92,7 @@ func (b Base) Validate() error {
 	}
 	return nil
 }
+
 func (b Base) CreateTestPacket() ([]byte, error) {
 	// TODO - implement
 	return nil, nil

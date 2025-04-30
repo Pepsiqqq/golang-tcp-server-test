@@ -21,6 +21,35 @@ type RRO struct {
 	MACKey []byte `xml:"MACKey"`
 }
 
+// CreateTestPacket will create test model with test values and marshal it to xml
+func (r RRO) CreateTestPacket() ([]byte, error) {
+	bs := []byte(strconv.Itoa(200)) // test value
+	base, err := r.Base.New(models.MID_RRO_COM_INI)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create base model")
+	}
+
+	rro := RRO{
+		Base:   base,
+		ID_DEV: 2,
+		KSize:  64,
+		G:      bs,
+		P:      bs,
+		A:      bs,
+		MSize:  64,
+		MAC:    bs,
+		MACKey: bs,
+	}
+
+	bytearray, err := xml.MarshalIndent(rro, "", "   ")
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to marshal")
+	}
+	bytearray = []byte(base.GetHeader() + string(bytearray))
+
+	return bytearray, nil
+}
+
 // Valdiate will validate models values
 func (r RRO) Validate() error {
 	err := r.ValidateKeys()
@@ -58,33 +87,4 @@ func (r RRO) ValidateMAC() error {
 		return errors.New("Error validating rsa size, mSize: " + fmt.Sprint(mSize) + " != " + "Mackey size: " + fmt.Sprint(cap(r.MACKey)))
 	}
 	return nil
-}
-
-// CreateTestPacket will create test model with test values and marshal it to xml
-func (r RRO) CreateTestPacket() ([]byte, error) {
-	bs := []byte(strconv.Itoa(200)) // test value
-	base, err := r.Base.New(models.MID_RRO_COM_INI)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to create base model")
-	}
-
-	rro := RRO{
-		Base:   base,
-		ID_DEV: 2,
-		KSize:  64,
-		G:      bs,
-		P:      bs,
-		A:      bs,
-		MSize:  64,
-		MAC:    bs,
-		MACKey: bs,
-	}
-
-	bytearray, err := xml.MarshalIndent(rro, "", "   ")
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to marshal")
-	}
-	bytearray = []byte(base.GetHeader() + string(bytearray))
-
-	return bytearray, nil
 }
