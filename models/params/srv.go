@@ -1,6 +1,8 @@
-package models
+package params
+
+import "main/models"
 
 type SRV_PARAMS struct {
-	Base
+	models.Base
 	Data []byte `xml:"Data"`
 }

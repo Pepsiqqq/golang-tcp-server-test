@@ -1,7 +1,9 @@
-package models
+package rd_mem
+
+import "main/models"
 
 type RRO_RD_MEM struct {
-	Base
+	models.Base
 	DataLen uint16 `xml:"DataLen"`
 	Data    []byte `xml:"Data"`
 }
