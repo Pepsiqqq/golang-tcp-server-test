@@ -28,7 +28,17 @@ func startClient() {
 	defer conn.Close()
 
 	// Read user input for testing model
-	fmt.Print("What model do you want to test[1-9]?")
+	fmt.Println("What models do you want to test? Variants:")
+	fmt.Println("1.com_ini")
+	fmt.Println("2.dta_snd")
+	fmt.Println("3.dta_req")
+	fmt.Println("4.ctrl_req")
+	fmt.Println("5.ecr_req")
+	fmt.Println("6.prg_mem")
+	fmt.Println("7.rd_mem")
+	fmt.Println("8.status")
+	fmt.Println("9.params")
+	
 	var input string
 	fmt.Scan(&input)
 	modelNumber, err := strconv.Atoi(input)
