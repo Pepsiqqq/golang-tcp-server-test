@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"io"
 	"main/models"
+	"main/models/com_ini"
 	"net"
-	"os"
+	"strconv"
 
 	"golang.org/x/net/html/charset"
 )
@@ -16,6 +17,7 @@ func main() {
 	startClient()
 }
 
+// Creates connection to tcp server, sends test packet of choice and listens to responce.
 func startClient() {
 	conn, err := net.Dial("tcp", "localhost:8080")
 	if err != nil {
@@ -23,26 +25,66 @@ func startClient() {
 		return
 	}
 	defer conn.Close()
-	sendData(conn)
-	listenResponce(conn)
-}
 
-func sendData(conn net.Conn) {
-	modelRRO := models.RRO_DTA_SND{}
-	data := modelRRO.CreateTestPacket()
-	file, _ := os.Create("test.xml")
-	file.Write(data)
-	fmt.Println("Sending data")
-	_, err := conn.Write(data)
-	fmt.Println("Sended data")
+	// Read user input for testing model
+	fmt.Print("What model do you want to test[1-9]?")
+	var input string
+	fmt.Scan(&input)
+	modelNumber, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Error when convering to string:", err)
 		return
 	}
+
+	// Creating map[int]struct to use with input
+	type mo struct {
+		RRO models.Model
+		SRV models.Model
+	}
+	modelsMap := map[int]mo{
+		1: {&com_ini.RRO{}, &com_ini.SRV{}},
+		2: {&com_ini.RRO{}, &com_ini.SRV{}},
+		3: {&com_ini.RRO{}, &com_ini.SRV{}},
+		4: {&com_ini.RRO{}, &com_ini.SRV{}},
+		5: {&com_ini.RRO{}, &com_ini.SRV{}},
+		6: {&com_ini.RRO{}, &com_ini.SRV{}},
+		7: {&com_ini.RRO{}, &com_ini.SRV{}},
+		8: {&com_ini.RRO{}, &com_ini.SRV{}},
+		9: {&com_ini.RRO{}, &com_ini.SRV{}},
+	}
+
+	// Creating model struct based on user input
+	model, ok := modelsMap[modelNumber]
+	if !ok {
+		fmt.Println("Invalid model selected")
+		return
+	}
+
+	// Sending RRO model to server and listening back for server model
+	sendData(conn, model.RRO)
+	listenResponce(conn, model.SRV)
 }
 
-func listenResponce(conn net.Conn) {
+// sendData will create test packet of selected model and send it to server
+func sendData(conn net.Conn, m models.Model) {
+	data, err := m.CreateTestPacket()
+	if err != nil {
+		fmt.Println("Error creating test packet:", err)
+		return
+	}
+	fmt.Println("Sending data to server")
+	_, err = conn.Write(data)
+	if err != nil {
+		fmt.Println("Error sendin data to server:", err)
+		return
+	}
+	fmt.Println("Data sended succesfully")
+}
+
+// listenResponce will wait for responce from server, unmarshal it into srv model of choice and validate it
+func listenResponce(conn net.Conn, m models.Model) {
 	fmt.Println("Listening to responce")
+	//make buffer for server responce
 	buffer := make([]byte, 4096)
 	_, err := conn.Read(buffer)
 	fmt.Println("Readed responce")
@@ -50,18 +92,23 @@ func listenResponce(conn net.Conn) {
 		fmt.Println("Error1:", err)
 		return
 	}
-	srv := models.SRV_DTA_SND{}
+	fmt.Print("Got this xml from server:")
 	fmt.Println(string(buffer))
-	fmt.Println("Unmarshaling")
+	fmt.Println("Unmarshaling responce")
+	// create new xml decoder set character set to windows-1251 and decode xml into srv model
 	decoder := xml.NewDecoder(bytes.NewReader(buffer))
 	decoder.CharsetReader = charset.NewReaderLabel
-	err = decoder.Decode(&srv)
+	err = decoder.Decode(&m)
 	if err != nil {
 		fmt.Println("Error2:", err)
 		return
-	}	
-	fmt.Println("Done")
-	if srv.MID == 0x0006 {
-		fmt.Printf("All good")
 	}
+	fmt.Println("Done")
+	fmt.Println("Validating")
+	err = m.Validate()
+	if err != nil {
+		fmt.Println("Error while validating:", err)
+		return
+	}
+	fmt.Println("Done")
 }

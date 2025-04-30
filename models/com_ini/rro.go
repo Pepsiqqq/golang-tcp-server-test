@@ -1,15 +1,16 @@
-package models
+package com_ini
 
 import (
 	"encoding/xml"
 	"fmt"
+	"main/models"
 	"strconv"
 
 	"github.com/go-faster/errors"
 )
 
-type RRO_СOM_INI struct {
-	Base
+type RRO struct {
+	models.Base
 	ID_DEV uint32 `xml:"ID_DEV"`
 	KSize  uint16 `xml:"KSize"`
 	G      []byte `xml:"G"`
@@ -20,7 +21,8 @@ type RRO_СOM_INI struct {
 	MACKey []byte `xml:"MACKey"`
 }
 
-func (r RRO_СOM_INI) Validate() error {
+// Valdiate will validate models values
+func (r RRO) Validate() error {
 	err := r.ValidateKeys()
 	if err != nil {
 		return errors.Wrap(err, "Failed to validate keys")
@@ -33,7 +35,7 @@ func (r RRO_СOM_INI) Validate() error {
 	return nil
 }
 
-func (r RRO_СOM_INI) ValidateKeys() error {
+func (r RRO) ValidateKeys() error {
 	keySize := (r.KSize + 7) / 8
 	if cap(r.G) != int(keySize) {
 		return errors.New("Error validating key size, keySize: " + fmt.Sprint(keySize) + " != " + "g size: " + fmt.Sprint(cap(r.G)))
@@ -47,7 +49,7 @@ func (r RRO_СOM_INI) ValidateKeys() error {
 	return nil
 }
 
-func (r RRO_СOM_INI) ValidateMAC() error {
+func (r RRO) ValidateMAC() error {
 	mSize := (r.MSize + 7) / 8
 	if cap(r.MAC) != int(mSize) {
 		return errors.New("Error validating rsa size, mSize: " + fmt.Sprint(mSize) + " != " + "Mac size: " + fmt.Sprint(cap(r.MAC)))
@@ -58,21 +60,15 @@ func (r RRO_СOM_INI) ValidateMAC() error {
 	return nil
 }
 
-func (r RRO_СOM_INI) CreateTestPacket() []byte {
-	bs := []byte(strconv.Itoa(200))
-	base := Base{
-		V:       1,
-		ProtVer: 2,
-		Length:  2,
-		SeqNum:  2,
-		MID:     0x0001,
-		TOut:    2,
-		Session: 2,
-		Flags:   2,
-		ZPad:    0,
-		CRC:     1,
+// CreateTestPacket will create test model with test values and marshal it to xml
+func (r RRO) CreateTestPacket() ([]byte, error) {
+	bs := []byte(strconv.Itoa(200)) // test value
+	base, err := r.Base.New(models.MID_RRO_COM_INI)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create base model")
 	}
-	rro := RRO_СOM_INI{
+
+	rro := RRO{
 		Base:   base,
 		ID_DEV: 2,
 		KSize:  64,
@@ -83,11 +79,12 @@ func (r RRO_СOM_INI) CreateTestPacket() []byte {
 		MAC:    bs,
 		MACKey: bs,
 	}
-	header := `<?xml version="1.0" encoding="windows-1251" ?>` + "\n"
+
 	bytearray, err := xml.MarshalIndent(rro, "", "   ")
-	bytearray = []byte(header + string(bytearray))
 	if err != nil {
-		panic(err)
+		return nil, errors.Wrap(err, "Failed to marshal")
 	}
-	return bytearray
+	bytearray = []byte(base.GetHeader() + string(bytearray))
+
+	return bytearray, nil
 }
